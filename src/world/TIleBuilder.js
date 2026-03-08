@@ -55,11 +55,12 @@ export function buildTilesAndGroups(level) {
   level.leaf = new Group();
   level.leaf.physics = "static";
   level.leaf.spriteSheet = level.assets.leafImg;
-  level.leaf.addAnis({ idle: { w: 32, h: 32, row: 0, frames: 5 } });
-  level.leaf.w = 10;
-  level.leaf.h = 6;
-  level.leaf.anis.offset.x = 2;
-  level.leaf.anis.offset.y = -4;
+  level.leaf.anis.cutFrames = true;
+  level.leaf.addAnis({ idle: { w: 64, h: 64, row: 0, frames: 6 } });
+  level.leaf.w = 20;
+  level.leaf.h = 20;
+  level.leaf.anis.offset.x = 0;
+  level.leaf.anis.offset.y = 3;
   level.leaf.tile = "x";
 
   // --- fire group (spawn from 'f') ---

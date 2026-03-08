@@ -22,7 +22,7 @@ export async function loadAssets(levelPkg, tuningDoc) {
   // To make this robust even if your boot flow uses async/await, we wrap loadImage in a Promise.
   const playerImg = await loadImageAsync("assets/foxSpriteSheet.png");
   const boarImg = await loadImageAsync("assets/boarSpriteSheet.png");
-  const leafImg = await loadImageAsync("assets/leafSpriteSheet.png");
+  const leafImg = await loadImageAsync("assets/slimeSpriteSheet.png");
   const fireImg = await loadImageAsync("assets/fireSpriteSheet.png");
 
   const groundTileImg = await loadImageAsync("assets/groundTile.png");
