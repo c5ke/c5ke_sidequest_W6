@@ -171,8 +171,8 @@ function initRuntime() {
   // Sprite rendering
   allSprites.pixelPerfect = true;
 
-  // Physics: manual step for stable pixel rendering
-  world.autoStep = false;
+  // Physics + sprite animations: autoStep=true lets p5play advance animation frames each frame
+  world.autoStep = true;
 
   // HUD buffer (screen-space)
   hudGfx = createGraphics(viewW, viewH);

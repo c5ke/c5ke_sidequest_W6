@@ -66,11 +66,7 @@ export class LeafController {
   static makeGroup(pkg, assets) {
     const g = new Group();
     g.physics = "static";
-    g.spriteSheet = assets.leafImg;
-
-    g.anis.cutFrames = true;
-    g.addAnis({ idle: { w: 64, h: 64, row: 0, frames: 6 } });
-
+    g.addAni("idle", loadAni(assets.leafImg, { w: 64, h: 64, row: 0, frames: 6 }));
     g.w = 20;
     g.h = 20;
     g.anis.offset.x = 0;

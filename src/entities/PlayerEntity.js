@@ -44,6 +44,8 @@ export class PlayerEntity {
     // death animation latch (prevents looping forever)
     this.deathAnimStarted = false;
 
+    this._currentAni = null;
+
     // timers
     this.invulnTimer = 0;
     this.knockTimer = 0;
@@ -66,7 +68,7 @@ export class PlayerEntity {
     this.COLLIDER_W = Number(this.tuning.player?.w ?? 18);
     this.COLLIDER_H = Number(this.tuning.player?.h ?? 12);
 
-    this.ANI_OFFSET_Y = Number(this.tuning.player?.aniOffsetY ?? -48);
+    this.ANI_OFFSET_Y = Number(this.tuning.player?.anisOffset?.y ?? this.tuning.player?.aniOffsetY ?? -40);
 
     // attack window
     this.ATTACK_START = Number(this.tuning.player?.attackStartFrame ?? 4);
@@ -83,13 +85,24 @@ export class PlayerEntity {
 
   _setAni(name) {
     if (!this._hasAni(name)) return false;
-    this.sprite.ani = name;
+    if (this._currentAni === name) return true;
+    this._currentAni = name;
+    if (typeof this.sprite.changeAni === "function") {
+      this.sprite.changeAni(name);
+    } else {
+      this.sprite.ani = name;
+    }
+    this.sprite.ani?.play?.();
+    if (this.sprite.ani?.offset) this.sprite.ani.offset.y = this.ANI_OFFSET_Y;
     return true;
   }
 
   _setAniFrame(name, frame) {
     if (!this._setAni(name)) return false;
-    if (this.sprite.ani) this.sprite.ani.frame = frame;
+    if (this.sprite.ani) {
+      this.sprite.ani.frame = frame;
+      this.sprite.ani?.play?.();
+    }
     return true;
   }
 
@@ -107,22 +120,45 @@ export class PlayerEntity {
   // -----------------------
   buildSprites() {
     const { frameW = 32, frameH = 32 } = this.tilesCfg;
+    const aniW = this.assets?.playerAnis?.idle?.w ?? frameW;
+    const aniH = this.assets?.playerAnis?.idle?.h ?? frameH;
 
-    this.sprite = new Sprite(this.startX, this.startY, frameW, frameH);
+    this.sprite = new Sprite(this.startX, this.startY, aniW, aniH);
     this.sprite.rotationLock = true;
 
     const anis = this.assets?.playerAnis;
     const img = this.assets?.playerImg;
 
-    if (img) this.sprite.spriteSheet = img;
-
     if (anis && typeof anis === "object") {
-      this.sprite.anis.w = frameW;
-      this.sprite.anis.h = frameH;
-      this.sprite.anis.offset.y = -48;
-      this.sprite.addAnis(anis);
+      this.sprite.anis.w = aniW;
+      this.sprite.anis.h = aniH;
+      for (const [name, def] of Object.entries(anis)) {
+        if (!def?.spriteSheet) continue;
+        const atlas = {
+          w: def.w ?? aniW,
+          h: def.h ?? aniH,
+          row: def.row ?? 0,
+          frames: def.frames ?? 1,
+          frameDelay: def.frameDelay ?? 4,
+          offset: { x: 0, y: this.ANI_OFFSET_Y },
+        };
+        if (def.hold === true || def.frameDelay === Infinity) {
+          atlas.frameDelay = Infinity;
+        }
+        if (def.frame != null) atlas.frame = def.frame;
+        const ani = loadAni(def.spriteSheet, atlas);
+        this.sprite.addAni(name, ani);
+      }
+      this.sprite.anis.offset.y = this.ANI_OFFSET_Y;
+      if (this.sprite.image && this.sprite.image.offset) {
+        this.sprite.image.offset.y = this.ANI_OFFSET_Y;
+      }
+      for (const key of Object.keys(this.sprite.anis)) {
+        const a = this.sprite.anis[key];
+        if (a && typeof a === "object" && a.offset) a.offset.y = this.ANI_OFFSET_Y;
+      }
       this._setAni("idle");
-    } else {
+    } else if (img) {
       this.sprite.img = img;
     }
 
@@ -165,6 +201,7 @@ export class PlayerEntity {
 
     if (!this.sprite) return;
 
+    this._currentAni = null;
     this.sprite.x = this.startX;
     this.sprite.y = this.startY;
     this.sprite.vel.x = 0;
@@ -266,8 +303,8 @@ export class PlayerEntity {
       return;
     }
 
-    if (this.knockTimer > 0 || this.pendingDeath) {
-      this._setAniFrame("hurtPose", 1);
+    if (this.invulnTimer > 0 || this.knockTimer > 0 || this.pendingDeath) {
+      this._setAniFrame("hurtPose", 0);
       return;
     }
 
@@ -281,7 +318,7 @@ export class PlayerEntity {
     }
 
     const moving = Math.abs(this.sprite.vel.x) > 0.01;
-    this._setAni(moving ? "run" : "idle");
+    this._setAni(moving ? "walk" : "idle");
   }
 
   // -----------------------
@@ -312,7 +349,8 @@ export class PlayerEntity {
     if (!this.sprite) return;
 
     if (!this.dead && this.invulnTimer > 0) {
-      this.sprite.tint = Math.floor(this.invulnTimer / 4) % 2 === 0 ? "#ff5050" : "#ffffff";
+      // Flash red/white every 2 frames so hurt feedback is clearly visible
+      this.sprite.tint = Math.floor(this.invulnTimer / 2) % 2 === 0 ? "#ff0000" : "#ffffff";
     } else {
       this.sprite.tint = "#ffffff";
     }

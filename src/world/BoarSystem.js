@@ -27,16 +27,24 @@ export function buildBoarGroup(level) {
   const hasDefs = !!(level.assets?.boarAnis && typeof level.assets.boarAnis === "object");
 
   if (hasDefs) {
-    // Wire the sheet + anis defs on the GROUP (nice default for Tiles-spawned boars),
-    // but do it safely.
-    safeAssignSpriteSheet(level.boar, level.assets.boarImg);
     safeConfigureAniSheet(level.boar, 64, 64, -1);
-
     try {
-      level.boar.addAnis(level.assets.boarAnis);
+      for (const [name, def] of Object.entries(level.assets.boarAnis)) {
+        if (!def?.spriteSheet) continue;
+        const atlas = {
+          w: def.w ?? 64,
+          h: def.h ?? 64,
+          row: def.row ?? 0,
+          frames: def.frames ?? 1,
+          frameDelay: def.frameDelay ?? 4,
+        };
+        if (def.hold === true || def.frameDelay === Infinity) atlas.frameDelay = Infinity;
+        const ani = loadAni(def.spriteSheet, atlas);
+        level.boar.addAni(name, ani);
+      }
       level.boar.scale = 0.5;
     } catch (err) {
-      console.warn("[BoarSystem] group.addAnis failed; boars may be static:", err);
+      console.warn("[BoarSystem] group addAni failed; boars may be static:", err);
       level.boar.img = level.assets.boarImg;
     }
   } else {
@@ -59,11 +67,15 @@ function ensureBoarAnis(level, e) {
   const frameW = Number(tiles.frameW) || 32;
   const frameH = Number(tiles.frameH) || 32;
 
-  safeAssignSpriteSheet(e, level.assets.boarImg);
   safeConfigureAniSheet(e, 64, 64, -1);
 
   try {
-    e.addAnis(defs);
+    for (const [name, def] of Object.entries(defs)) {
+      if (!def?.spriteSheet) continue;
+      const atlas = { w: def.w ?? 64, h: def.h ?? 64, row: def.row ?? 0, frames: def.frames ?? 1, frameDelay: def.frameDelay ?? 4 };
+      if (def.hold === true || def.frameDelay === Infinity) atlas.frameDelay = Infinity;
+      e.addAni(name, loadAni(def.spriteSheet, atlas));
+    }
     e.scale = 0.5;
   } catch (err) {
     // If addAnis fails, fall back to static image so the game doesn't crash.

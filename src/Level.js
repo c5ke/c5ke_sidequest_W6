@@ -109,15 +109,53 @@ export class Level {
   // ani safety helpers
   // -----------------------
 
+  _advanceSpriteAnimations() {
+    this._aniTick = (this._aniTick ?? 0) + 1;
+    const tick = this._aniTick;
+    const playerAnis = this.assets?.playerAnis ?? {};
+    const boarAnis = this.assets?.boarAnis ?? {};
+    for (const s of allSprites) {
+      if (!s.ani) continue;
+      const delay = s.ani.frameDelay ?? 4;
+      if (delay === Infinity) continue;
+      let frames =
+        s.ani.images?.length ??
+        (s.ani.lastFrame != null ? s.ani.lastFrame + 1 : null);
+      if (!frames || frames <= 1) {
+        let def = null;
+        for (const [name, ani] of Object.entries(s.anis || {})) {
+          if (ani === s.ani) {
+            def = playerAnis[name] ?? boarAnis[name];
+            break;
+          }
+        }
+        frames = def?.frames ?? 1;
+      }
+      if (frames <= 1) continue;
+      const cycle = Math.floor(tick / Math.max(1, delay)) % frames;
+      s.ani.frame = cycle;
+    }
+  }
+
   _setAniSafe(sprite, name) {
     if (!sprite?.anis || !sprite.anis[name]) return false;
-    sprite.ani = name;
+    if (sprite._lastAni === name) return true;
+    sprite._lastAni = name;
+    if (typeof sprite.changeAni === "function") {
+      sprite.changeAni(name);
+    } else {
+      sprite.ani = name;
+      sprite.ani?.play?.();
+    }
     return true;
   }
 
   _setAniFrame0Safe(sprite, name) {
     if (!this._setAniSafe(sprite, name)) return false;
-    if (sprite.ani) sprite.ani.frame = 0;
+    if (sprite.ani) {
+      sprite.ani.frame = 0;
+      sprite.ani?.play?.();
+    }
     return true;
   }
 
@@ -186,8 +224,8 @@ export class Level {
     // 3) Optional safety checks (remove later if desired)
     this._preStepPhysicsSanity();
 
-    // 4) Physics step
-    world.step();
+    // 4) Advance sprite animation frames (ensure each image in sheet cycles)
+    this._advanceSpriteAnimations();
 
     // 5) World rules
     this._fallResetIfNeeded();
@@ -203,6 +241,7 @@ export class Level {
   restart() {
     this.won = false;
     this.score = 0;
+    this._aniTick = 0;
 
     // reset timer on restart
     this.elapsedMs = 0;

@@ -135,6 +135,14 @@ function defaultPlayerAnis() {
       frames: 5,
       frameDelay: 10,
     },
+    walk: {
+      spriteSheet: "assets/Walk.png",
+      w: 128,
+      h: 128,
+      row: 0,
+      frames: 6,
+      frameDelay: 5,
+    },
     run: {
       spriteSheet: "assets/Run.png",
       w: 128,
@@ -161,11 +169,11 @@ function defaultPlayerAnis() {
       frameDelay: 2,
     },
     hurtPose: {
-      spriteSheet: "assets/Idle.png",
+      spriteSheet: "assets/Hurt.png",
       w: 128,
       h: 128,
       row: 0,
-      frames: 5,
+      frames: 2,
       hold: true,
       frame: 1,
     },

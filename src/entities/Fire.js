@@ -46,11 +46,7 @@ export class FireController {
   static makeGroup(pkg, assets) {
     const g = new Group();
     g.physics = "static";
-    g.spriteSheet = assets.fireImg;
-
-    // If you later move this into tuning.json, replace these literals.
-    g.addAnis({ burn: { w: 32, h: 32, row: 0, frames: 16 } });
-
+    g.addAni("burn", loadAni(assets.fireImg, { w: 32, h: 32, row: 0, frames: 16 }));
     g.w = 18;
     g.h = 16;
 
