@@ -21,7 +21,8 @@ Cherry Ke c5ke 21090404
 
 Slime Sprite Sheet from:
 https://craftpix.net/freebies/free-slime-mobs-pixel-art-top-down-sprite-pack/
-
+Player Sprite Sheet from:
+https://craftpix.net/freebies/free-fantasy-chibi-female-sprites-pixel-art/ 
 ---
 
 ## GenAI
