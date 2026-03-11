@@ -66,7 +66,7 @@ export class PlayerEntity {
     this.COLLIDER_W = Number(this.tuning.player?.w ?? 18);
     this.COLLIDER_H = Number(this.tuning.player?.h ?? 12);
 
-    this.ANI_OFFSET_Y = Number(this.tuning.player?.aniOffsetY ?? -8);
+    this.ANI_OFFSET_Y = Number(this.tuning.player?.aniOffsetY ?? -48);
 
     // attack window
     this.ATTACK_START = Number(this.tuning.player?.attackStartFrame ?? 4);
@@ -119,7 +119,7 @@ export class PlayerEntity {
     if (anis && typeof anis === "object") {
       this.sprite.anis.w = frameW;
       this.sprite.anis.h = frameH;
-      this.sprite.anis.offset.y = this.ANI_OFFSET_Y;
+      this.sprite.anis.offset.y = -48;
       this.sprite.addAnis(anis);
       this._setAni("idle");
     } else {
@@ -129,6 +129,8 @@ export class PlayerEntity {
     // collider
     this.sprite.w = this.COLLIDER_W;
     this.sprite.h = this.COLLIDER_H;
+
+    this.sprite.scale = 0.4;
     this.sprite.friction = 0;
     this.sprite.bounciness = 0;
 

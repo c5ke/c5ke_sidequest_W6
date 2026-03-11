@@ -20,7 +20,7 @@ export async function loadAssets(levelPkg, tuningDoc) {
   // IMPORTANT:
   // loadImage() is "preload-safe" only if p5 is actually tracking it inside preload().
   // To make this robust even if your boot flow uses async/await, we wrap loadImage in a Promise.
-  const playerImg = await loadImageAsync("assets/foxSpriteSheet.png");
+  const playerImg = await loadImageAsync("assets/Idle.png");
   const boarImg = await loadImageAsync("assets/boarSpriteSheet.png");
   const leafImg = await loadImageAsync("assets/slimeSpriteSheet.png");
   const fireImg = await loadImageAsync("assets/fireSpriteSheet.png");
@@ -40,11 +40,8 @@ export async function loadAssets(levelPkg, tuningDoc) {
   const backgrounds = await loadBackgrounds(levelPkg);
 
   // ---- anis ----
-  // Prefer tuning-driven animations if present, else fallback to monolith defaults.
-  // ALSO: inject a spriteSheet reference by default so addAnis never tries to load "undefined".
-  let playerAnis = buildAnis(tuningDoc?.player?.animations, defaultPlayerAnis(), {
-    spriteSheet: playerImg,
-  });
+  // Player uses Idle.png, Run.png, Jump.png, Attack.png, Dead.png (each defines its own spriteSheet path).
+  let playerAnis = buildAnis(null, defaultPlayerAnis(), {});
 
   let boarAnis = buildAnis(tuningDoc?.boar?.animations, defaultBoarAnis(), {
     spriteSheet: boarImg,
@@ -129,15 +126,59 @@ function buildAnis(tuningAnis, fallbackAnis, inject = {}) {
   return out;
 }
 
-// --- fallback anis (from your monolith) ---
+// --- fallback anis: Idle, Run, Jump, Attack, Dead sprite strips ---
 function defaultPlayerAnis() {
   return {
-    idle: { row: 0, frames: 4, frameDelay: 10 },
-    run: { row: 1, frames: 4, frameDelay: 3 },
-    jump: { row: 2, frames: 3, frameDelay: Infinity, frame: 0 },
-    attack: { row: 3, frames: 6, frameDelay: 2 },
-    hurtPose: { row: 5, frames: 4, frameDelay: Infinity },
-    death: { row: 5, frames: 4, frameDelay: 16 },
+    idle: {
+      spriteSheet: "assets/Idle.png",
+      w: 128,
+      h: 128,
+      row: 0,
+      frames: 5,
+      frameDelay: 10,
+    },
+    run: {
+      spriteSheet: "assets/Run.png",
+      w: 128,
+      h: 128,
+      row: 0,
+      frames: 8,
+      frameDelay: 3,
+    },
+    jump: {
+      spriteSheet: "assets/Jump.png",
+      w: 128,
+      h: 128,
+      row: 0,
+      frames: 8,
+      hold: true,
+      frame: 0,
+    },
+    attack: {
+      spriteSheet: "assets/Attack.png",
+      w: 128,
+      h: 128,
+      row: 0,
+      frames: 8,
+      frameDelay: 2,
+    },
+    hurtPose: {
+      spriteSheet: "assets/Idle.png",
+      w: 128,
+      h: 128,
+      row: 0,
+      frames: 5,
+      hold: true,
+      frame: 1,
+    },
+    death: {
+      spriteSheet: "assets/Dead.png",
+      w: 128,
+      h: 128,
+      row: 0,
+      frames: 5,
+      frameDelay: 16,
+    },
   };
 }
 
