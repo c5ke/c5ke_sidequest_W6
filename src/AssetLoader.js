@@ -21,7 +21,7 @@ export async function loadAssets(levelPkg, tuningDoc) {
   // loadImage() is "preload-safe" only if p5 is actually tracking it inside preload().
   // To make this robust even if your boot flow uses async/await, we wrap loadImage in a Promise.
   const playerImg = await loadImageAsync("assets/Idle.png");
-  const boarImg = await loadImageAsync("assets/boarSpriteSheet.png");
+  const boarImg = await loadImageAsync("assets/Slime2_Idle_body.png");
   const leafImg = await loadImageAsync("assets/slimeSpriteSheet.png");
   const fireImg = await loadImageAsync("assets/fireSpriteSheet.png");
 
@@ -43,9 +43,7 @@ export async function loadAssets(levelPkg, tuningDoc) {
   // Player uses Idle.png, Run.png, Jump.png, Attack.png, Dead.png (each defines its own spriteSheet path).
   let playerAnis = buildAnis(null, defaultPlayerAnis(), {});
 
-  let boarAnis = buildAnis(tuningDoc?.boar?.animations, defaultBoarAnis(), {
-    spriteSheet: boarImg,
-  });
+  let boarAnis = buildAnis(null, defaultBoarAnis(), {});
 
   // If tuning.json uses per-animation "img" fields (strings), preload them here and replace with p5.Images.
   // This prevents runtime XHRs and avoids /undefined crashes.
@@ -184,9 +182,31 @@ function defaultPlayerAnis() {
 
 function defaultBoarAnis() {
   return {
-    run: { row: 1, frames: 4, frameDelay: 3 },
-    throwPose: { row: 4, frames: 1, frameDelay: Infinity, frame: 0 },
-    death: { row: 5, frames: 4, frameDelay: 16 },
+    run: {
+      spriteSheet: "assets/Slime2_Run_body.png",
+      w: 64,
+      h: 64,
+      row: 0,
+      frames: 8,
+      frameDelay: 3,
+    },
+    throwPose: {
+      spriteSheet: "assets/Slime2_Attack_body.png",
+      w: 64,
+      h: 64,
+      row: 0,
+      frames: 1,
+      hold: true,
+      frame: 0,
+    },
+    death: {
+      spriteSheet: "assets/Slime2_Death.png",
+      w: 64,
+      h: 64,
+      row: 0,
+      frames: 10,
+      frameDelay: 16,
+    },
   };
 }
 

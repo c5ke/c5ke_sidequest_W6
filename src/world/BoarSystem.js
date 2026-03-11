@@ -30,10 +30,11 @@ export function buildBoarGroup(level) {
     // Wire the sheet + anis defs on the GROUP (nice default for Tiles-spawned boars),
     // but do it safely.
     safeAssignSpriteSheet(level.boar, level.assets.boarImg);
-    safeConfigureAniSheet(level.boar, frameW, frameH, -8);
+    safeConfigureAniSheet(level.boar, 64, 64, -1);
 
     try {
       level.boar.addAnis(level.assets.boarAnis);
+      level.boar.scale = 0.5;
     } catch (err) {
       console.warn("[BoarSystem] group.addAnis failed; boars may be static:", err);
       level.boar.img = level.assets.boarImg;
@@ -59,10 +60,11 @@ function ensureBoarAnis(level, e) {
   const frameH = Number(tiles.frameH) || 32;
 
   safeAssignSpriteSheet(e, level.assets.boarImg);
-  safeConfigureAniSheet(e, frameW, frameH, -8);
+  safeConfigureAniSheet(e, 64, 64, -1);
 
   try {
     e.addAnis(defs);
+    e.scale = 0.5;
   } catch (err) {
     // If addAnis fails, fall back to static image so the game doesn't crash.
     console.warn("[BoarSystem] sprite.addAnis failed; using static img:", err);
@@ -199,9 +201,10 @@ export function rebuildBoarsFromSpawns(level) {
     const hasDefs = level.assets?.boarAnis && typeof level.assets.boarAnis === "object";
     if (hasDefs) {
       safeAssignSpriteSheet(e, level.assets.boarImg);
-      safeConfigureAniSheet(e, frameW, frameH, -8);
+      safeConfigureAniSheet(e, 64, 64, -1);
       try {
         e.addAnis(level.assets.boarAnis);
+        e.scale = 0.5;
       } catch (err) {
         e.img = level.assets.boarImg;
       }
@@ -294,12 +297,15 @@ export function updateBoars(level) {
       // Make sure *this sprite* has anis, not just the group.
       if (hasAnis) {
         safeAssignSpriteSheet(e, level.assets.boarImg);
-        safeConfigureAniSheet(e, frameW, frameH, -8);
+        safeConfigureAniSheet(e, 64, 64, -1);
 
         // add defs (safe)
         try {
           // only attempt if missing something obvious
-          if (!e.anis || !e.anis.run) e.addAnis(level.assets.boarAnis);
+          if (!e.anis || !e.anis.run) {
+            e.addAnis(level.assets.boarAnis);
+            e.scale = 1;
+          }
         } catch (err) {
           // ignore; ensureBoarAnis will also try
         }
