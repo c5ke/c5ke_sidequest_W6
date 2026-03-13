@@ -24,7 +24,29 @@ export class SoundManager {
     this.sfx[name] = loadSound(path);
   }
 
+  loadAsync(name, path, opts = {}) {
+    return new Promise((resolve, reject) => {
+      loadSound(
+        path,
+        (snd) => {
+          if (opts.loop) snd.setLoop(true);
+          this.sfx[name] = snd;
+          resolve();
+        },
+        (err) => reject(err)
+      );
+    });
+  }
+
   play(name) {
     this.sfx[name]?.play();
+  }
+
+  playMusic(name) {
+    const snd = this.sfx[name];
+    if (snd && !snd.isPlaying?.()) {
+      snd.setLoop(true);
+      snd.play();
+    }
   }
 }
