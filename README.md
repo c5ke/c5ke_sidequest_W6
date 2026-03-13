@@ -23,6 +23,8 @@ Slime Sprite Sheet from:
 https://craftpix.net/freebies/free-slime-mobs-pixel-art-top-down-sprite-pack/
 Player Sprite Sheet from:
 https://craftpix.net/freebies/free-fantasy-chibi-female-sprites-pixel-art/
+Tile pack from:
+https://craftpix.net/freebies/free-platformer-game-tileset-pixel-art/
 ---
 
 ## GenAI

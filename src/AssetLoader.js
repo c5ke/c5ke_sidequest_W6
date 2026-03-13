@@ -25,12 +25,22 @@ export async function loadAssets(levelPkg, tuningDoc) {
   const leafImg = await loadImageAsync("assets/slimeSpriteSheet.png");
   const fireImg = await loadImageAsync("assets/fireSpriteSheet.png");
 
-  const groundTileImg = await loadImageAsync("assets/groundTile.png");
-  const groundTileDeepImg = await loadImageAsync("assets/groundTileDeep.png");
-  const platformLCImg = await loadImageAsync("assets/platformLC.png");
-  const platformRCImg = await loadImageAsync("assets/platformRC.png");
-  const wallLImg = await loadImageAsync("assets/wallL.png");
-  const wallRImg = await loadImageAsync("assets/wallR.png");
+  // Extract tiles from Tileset.png (32x32 grid, 544x384 = 17x12 tiles)
+  const tilesetImg = await loadImageAsync("assets/Tileset.png");
+  const TILE_SZ = 32;
+  const extractTile = (col, row) => {
+    const out = createImage(TILE_SZ, TILE_SZ);
+    out.copy(tilesetImg, col * TILE_SZ, row * TILE_SZ, TILE_SZ, TILE_SZ, 0, 0, TILE_SZ, TILE_SZ);
+    return out;
+  };
+  // (0,0) is often empty; use (1,0) or (2,1) for visible rock/grass tiles
+  const baseTile = extractTile(1, 0);
+  const groundTileImg = baseTile;
+  const groundTileDeepImg = baseTile;
+  const platformLCImg = baseTile;
+  const platformRCImg = baseTile;
+  const wallLImg = baseTile;
+  const wallRImg = baseTile;
 
   const fontImg = await loadImageAsync("assets/bitmapFont.png");
 
