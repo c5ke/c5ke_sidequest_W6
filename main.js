@@ -129,11 +129,11 @@ async function boot() {
 
   // --- Audio registry (load assets folder sounds) ---
   soundManager = new SoundManager();
-  await soundManager.loadAsync("collect", "assets/collectSound.mp3");
-  await soundManager.loadAsync("damage", "assets/damageSound.mp3");
-  await soundManager.loadAsync("attack", "assets/attackSound.mp3");
-  await soundManager.loadAsync("jump", "assets/jumpingSound.mp3");
-  await soundManager.loadAsync("music", "assets/musicSound.mp3", { loop: true });
+  await soundManager.loadAsync("collect", "assets/sounds/collectSound.mp3");
+  await soundManager.loadAsync("damage", "assets/sounds/damageSound.mp3");
+  await soundManager.loadAsync("attack", "assets/sounds/attackSound.mp3");
+  await soundManager.loadAsync("jump", "assets/sounds/jumpingSound.mp3");
+  await soundManager.loadAsync("music", "assets/sounds/musicSound.mp3", { loop: true });
 
   // --- Parallax layer defs (VIEW) ---
   const defs = levelPkg.level?.view?.parallax ?? [];

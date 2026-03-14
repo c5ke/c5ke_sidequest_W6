@@ -20,13 +20,13 @@ export async function loadAssets(levelPkg, tuningDoc) {
   // IMPORTANT:
   // loadImage() is "preload-safe" only if p5 is actually tracking it inside preload().
   // To make this robust even if your boot flow uses async/await, we wrap loadImage in a Promise.
-  const playerImg = await loadImageAsync("assets/Idle.png");
-  const boarImg = await loadImageAsync("assets/Slime2_Idle_body.png");
-  const leafImg = await loadImageAsync("assets/slimeSpriteSheet.png");
-  const fireImg = await loadImageAsync("assets/fireSpriteSheet.png");
+  const playerImg = await loadImageAsync("assets/images/Idle.png");
+  const boarImg = await loadImageAsync("assets/images/Slime2_Idle_body.png");
+  const leafImg = await loadImageAsync("assets/images/slimeSpriteSheet.png");
+  const fireImg = await loadImageAsync("assets/images/fireSpriteSheet.png");
 
   // Extract tiles from Tileset.png (32x32 grid, 544x384 = 17x12 tiles)
-  const tilesetImg = await loadImageAsync("assets/Tileset.png");
+  const tilesetImg = await loadImageAsync("assets/images/Tileset.png");
   const TILE_SZ = 32;
   const extractTile = (col, row) => {
     const out = createImage(TILE_SZ, TILE_SZ);
@@ -42,7 +42,7 @@ export async function loadAssets(levelPkg, tuningDoc) {
   const wallLImg = baseTile;
   const wallRImg = baseTile;
 
-  const fontImg = await loadImageAsync("assets/bitmapFont.png");
+  const fontImg = await loadImageAsync("assets/images/bitmapFont.png");
 
   // Backgrounds (keys should match levels.json parallaxLayers[].key)
   // If levelPkg provides a parallax layer list with { key, src }, prefer that.
@@ -138,7 +138,7 @@ function buildAnis(tuningAnis, fallbackAnis, inject = {}) {
 function defaultPlayerAnis() {
   return {
     idle: {
-      spriteSheet: "assets/Idle.png",
+      spriteSheet: "assets/images/Idle.png",
       w: 128,
       h: 128,
       row: 0,
@@ -146,7 +146,7 @@ function defaultPlayerAnis() {
       frameDelay: 10,
     },
     walk: {
-      spriteSheet: "assets/Walk.png",
+      spriteSheet: "assets/images/Walk.png",
       w: 128,
       h: 128,
       row: 0,
@@ -154,7 +154,7 @@ function defaultPlayerAnis() {
       frameDelay: 5,
     },
     run: {
-      spriteSheet: "assets/Run.png",
+      spriteSheet: "assets/images/Run.png",
       w: 128,
       h: 128,
       row: 0,
@@ -162,7 +162,7 @@ function defaultPlayerAnis() {
       frameDelay: 3,
     },
     jump: {
-      spriteSheet: "assets/Jump.png",
+      spriteSheet: "assets/images/Jump.png",
       w: 128,
       h: 128,
       row: 0,
@@ -171,7 +171,7 @@ function defaultPlayerAnis() {
       frame: 0,
     },
     attack: {
-      spriteSheet: "assets/Attack.png",
+      spriteSheet: "assets/images/Attack.png",
       w: 128,
       h: 128,
       row: 0,
@@ -179,7 +179,7 @@ function defaultPlayerAnis() {
       frameDelay: 2,
     },
     hurtPose: {
-      spriteSheet: "assets/Hurt.png",
+      spriteSheet: "assets/images/Hurt.png",
       w: 128,
       h: 128,
       row: 0,
@@ -188,7 +188,7 @@ function defaultPlayerAnis() {
       frame: 1,
     },
     death: {
-      spriteSheet: "assets/Dead.png",
+      spriteSheet: "assets/images/Dead.png",
       w: 128,
       h: 128,
       row: 0,
@@ -201,7 +201,7 @@ function defaultPlayerAnis() {
 function defaultBoarAnis() {
   return {
     run: {
-      spriteSheet: "assets/Slime2_Run_body.png",
+      spriteSheet: "assets/images/Slime2_Run_body.png",
       w: 64,
       h: 64,
       row: 0,
@@ -209,7 +209,7 @@ function defaultBoarAnis() {
       frameDelay: 3,
     },
     throwPose: {
-      spriteSheet: "assets/Slime2_Attack_body.png",
+      spriteSheet: "assets/images/Slime2_Attack_body.png",
       w: 64,
       h: 64,
       row: 0,
@@ -218,7 +218,7 @@ function defaultBoarAnis() {
       frame: 0,
     },
     death: {
-      spriteSheet: "assets/Slime2_Death.png",
+      spriteSheet: "assets/images/Slime2_Death.png",
       w: 64,
       h: 64,
       row: 0,
@@ -253,7 +253,7 @@ function loadImageAsync(path) {
 async function loadBackgrounds(levelPkg) {
   // If levels.json supplies parallaxLayers with keys and sources, load them dynamically.
   // Expected shape (flexible):
-  // levelPkg.parallaxLayers = [{ key:"bgFar", src:"assets/..." }, ...]
+  // levelPkg.parallaxLayers = [{ key:"bgFar", src:"assets/images/..." }, ...]
   // Your levels.json stores parallax in: level.view.parallax
   const layers = levelPkg?.level?.view?.parallax || levelPkg?.parallaxLayers;
   
@@ -273,16 +273,16 @@ async function loadBackgrounds(levelPkg) {
 
   // Default fallback set
   return {
-    bgFar: await loadImageAsync("assets/background_layer_1.png"),
-    bgMid: await loadImageAsync("assets/background_layer_2.png"),
-    bgFore: await loadImageAsync("assets/background_layer_3.png"),
+    bgFar: await loadImageAsync("assets/images/background_layer_1.png"),
+    bgMid: await loadImageAsync("assets/images/background_layer_2.png"),
+    bgFore: await loadImageAsync("assets/images/background_layer_3.png"),
   };
 }
 
 async function resolveAniImages(anis, label = "entity") {
   if (!anis || typeof anis !== "object") return anis;
 
-  // If tuning uses { img: "assets/some.png" } per animation, convert those strings to p5.Images now.
+  // If tuning uses { img: "assets/images/some.png" } per animation, convert those strings to p5.Images now.
   const out = {};
   for (const [name, def] of Object.entries(anis)) {
     if (!def || typeof def !== "object") continue;
