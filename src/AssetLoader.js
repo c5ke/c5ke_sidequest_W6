@@ -33,7 +33,7 @@ export async function loadAssets(levelPkg, tuningDoc) {
     out.copy(tilesetImg, col * TILE_SZ, row * TILE_SZ, TILE_SZ, TILE_SZ, 0, 0, TILE_SZ, TILE_SZ);
     return out;
   };
-  // (0,0) is often empty; use (1,0) or (2,1) for visible rock/grass tiles
+  // Use (1,0) as primary tile - other positions may be empty in this tileset
   const baseTile = extractTile(1, 0);
   const groundTileImg = baseTile;
   const groundTileDeepImg = baseTile;
